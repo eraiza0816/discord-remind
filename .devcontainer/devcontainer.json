@@ -1,0 +1,27 @@
+{
+	"name": "Discord Remind Bot - Test Environment",
+	"image": "mcr.microsoft.com/devcontainers/python:3.12",
+
+	"workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
+	"workspaceMount": "source=${localWorkspaceFolder},target=/workspaces/${localWorkspaceFolderBasename},type=bind,consistency=cached",
+	"postCreateCommand": "pip install uv && uv pip install --system -r requirements.txt && uv pip install --system -r requirements-dev.txt",
+
+	"customizations": {
+		"vscode": {
+			"settings": {
+				"python.defaultInterpreterPath": "/usr/local/bin/python",
+				"python.testing.pytestArgs": [
+					"tests"
+				],
+				"python.testing.unittestEnabled": false,
+				"python.testing.pytestEnabled": true
+			},
+			"extensions": [
+				"ms-python.python",
+				"ms-python.vscode-pylance",
+				"ms-azuretools.vscode-docker",
+				"bierner.markdown-mermaid"
+			]
+		}
+	}
+}
