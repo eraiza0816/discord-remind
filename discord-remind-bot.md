@@ -175,11 +175,12 @@
 *   **コマンド仕様 (Command Interface)**:
     *   `/remind set target:<target> time:<time> message:<message>`
         *   `<target>`: `@me`, `#channel-name`, ユーザーメンション, チャンネルメンション (文字列)
-        *   `<time>`: 時刻表現 (文字列, 例: `15:30`, `in 1 hour`, `tomorrow at 9:00`, `every monday at 10:00`)
+        *   `<time>`: 時刻表現 (文字列, 例: `15:30`, `in 1 hour`, `in 30 min`, `in 10 s`, `tomorrow at 9:00`, `every monday at 10:00`)
         *   `<message>`: リマインド内容 (文字列)
     *   `/remind list`
     *   `/remind delete reminder_id:<id>`
         *   `<id>`: 削除するリマインドのID (数値)
+    *   `/remind help`
 
 ## 5. インフラストラクチャ層 (Infrastructure Layer)
 
@@ -242,6 +243,10 @@
     3.  対象が見つかれば、DBから削除。
     4.  `apscheduler` から対応するジョブを削除 (`scheduler.remove_job`)。
     5.  結果をInteractionの応答として送信。
+*   **ヘルプ表示時 (`/remind help`)**:
+    1.  Interactionを受け取る。
+    2.  ボットの基本的な使い方、コマンド一覧、READMEへのリンクを含むEmbedを作成。
+    3.  作成したEmbedをInteractionの応答（ephemeral）として送信。
 
 ## 7. 非機能要件（考慮事項）
 

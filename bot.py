@@ -258,17 +258,19 @@ def parse_time_string(time_str: str, now: datetime):
         except ValueError:
             pass
 
-    match = re.fullmatch(r"in\s+(\d+)\s+(minutes?|hours?|days?)", time_str_lower)
+    match = re.fullmatch(r"in\s+(\d+)\s+(minutes?|min|m|hours?|h|days?|d|seconds?|sec|s)", time_str_lower)
     if match:
         value = int(match.group(1))
         unit = match.group(2)
         delta = timedelta()
-        if "minute" in unit:
+        if unit.startswith("minute") or unit == "min" or unit == "m":
             delta = timedelta(minutes=value)
-        elif "hour" in unit:
+        elif unit.startswith("hour") or unit == "h":
             delta = timedelta(hours=value)
-        elif "day" in unit:
+        elif unit.startswith("day") or unit == "d":
             delta = timedelta(days=value)
+        elif unit.startswith("second") or unit == "sec" or unit == "s":
+            delta = timedelta(seconds=value)
         trigger_time = now + delta
         return trigger_time, False, None
 
@@ -595,6 +597,21 @@ async def slash_delete_reminder(interaction: discord.Interaction, reminder_id: i
         await interaction.response.send_message(f"リマインド削除中にエラーが発生しました。", ephemeral=True)
     finally:
         conn.close()
+
+@remind_group.command(name="help", description="ボットの使い方やコマンドのヘルプを表示します。")
+async def slash_help(interaction: discord.Interaction):
+    """スラッシュコマンドによるヘルプ表示"""
+    readme_url = "https://github.com/eraiza0816/discord-remind/blob/main/README.md"
+    embed = discord.Embed(
+        title="Discord Remind Bot ヘルプ",
+        description=f"詳しい使い方は、こちらの [README]({readme_url}) をご覧ください。",
+        color=discord.Color.green()
+    )
+    embed.add_field(name="`/remind set target:... time:... message:...`", value="新しいリマインドを設定します。", inline=False)
+    embed.add_field(name="`/remind list`", value="設定済みのリマインド一覧を表示します。", inline=False)
+    embed.add_field(name="`/remind delete reminder_id:...`", value="指定IDのリマインドを削除します。", inline=False)
+    embed.add_field(name="`/remind help`", value="このヘルプを表示します。", inline=False)
+    await interaction.response.send_message(embed=embed, ephemeral=True)
 
 bot.tree.add_command(remind_group)
 
